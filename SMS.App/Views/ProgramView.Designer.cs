@@ -134,6 +134,7 @@
             buttonUpdate.TabIndex = 8;
             buttonUpdate.Text = "Update";
             buttonUpdate.UseVisualStyleBackColor = true;
+            buttonUpdate.Click += buttonUpdate_Click;
             // 
             // dataGridViewProgramList
             // 
@@ -142,7 +143,7 @@
             dataGridViewProgramList.Margin = new Padding(3, 2, 3, 2);
             dataGridViewProgramList.Name = "dataGridViewProgramList";
             dataGridViewProgramList.RowHeadersWidth = 51;
-            dataGridViewProgramList.Size = new Size(386, 282);
+            dataGridViewProgramList.Size = new Size(359, 255);
             dataGridViewProgramList.TabIndex = 10;
             // 
             // label4

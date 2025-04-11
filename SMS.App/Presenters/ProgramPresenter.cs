@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SMS.App.Views;
 using SMS.App.Views.IViews;
 using SMS.Domain;
 using SMS.Infastructure.Data;
@@ -55,32 +56,81 @@ namespace SMS.App.Presenters
 
         private void DeleteEvent(object? sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entity = (Programs)_bindingSource.Current;
+                _dbContext.Programs.Remove(entity);
+                _dbContext.SaveChanges();
+
+                _programView.SetMessage("Program Deleted Succcessfully");
+                LoadProgramList();
+            }
+            catch (Exception ex)
+            {
+                _programView.SetMessage($"Error: {ex.Message}");
+            }
+            finally
+            {
+                LoadProgramList();
+            }
         }
 
         private void UpdateEvent(object? sender, EventArgs e)
         {
-            
+            try
+            {
+                var editProgram = _dbContext.Programs.Find(_programView.ProgramId);
+
+                if (editProgram == null)
+                {
+                    _programView.SetMessage("Program Not Found");
+                    return;
+                }
+
+                using (var createProgram = new CreateProgramView(editProgram))
+                {
+                    if (createProgram.ShowDialog() == DialogResult.OK)
+                    {
+                        createProgram.Text = "Edit Program";
+                        LoadProgramList();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _programView.SetMessage($"Error: {ex.Message}");
+            }
+            finally
+            {
+                LoadProgramList();
+            }
         }
 
         private void ReadEvent(object? sender, EventArgs e)
         {
-            LoadProgramList(_programView.SearchValue);
+            try
+            {
+                LoadProgramList(_programView.SearchValue);
+            }
+            catch (Exception ex)
+            {
+                _programView.SetMessage($"Error: {ex.Message}");
+            }
+            finally
+            {
+                LoadProgramList();
+            }
         }
 
-        private async void CreateEvent(object? sender, EventArgs e)
+        private void CreateEvent(object? sender, EventArgs e)
         {
-            var program = new Programs
+            using (var createProgram = new CreateProgramView())
             {
-                ProgramName = _programView.ProgramName,
-                Description = _programView.Description
-            };
-            await _dbContext.Programs.AddAsync(program);
-            await _dbContext.SaveChangesAsync();
-
-            _programView.SetMessage("Program Created Successfully");
-
-            LoadProgramList();
+                if (createProgram.ShowDialog() == DialogResult.OK)
+                {
+                    LoadProgramList();
+                }
+            }
         }
     }
 }
